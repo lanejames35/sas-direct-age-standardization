@@ -16,6 +16,55 @@
 
 /* Help message */
 %if %upcase(&printHelp) = HELP %then %goto help_msg;
+/* Parameter validation */
+%if %length(&data) = 0 %then %do;
+    %put ====================;
+    %put An value for data is required;
+    %put Please check your macro call and try again.;
+    %put Run %nrsrt(%ageStandardize(help)) for help;
+    %put ====================;
+    %goto exit;
+%end;
+%if %length(&ageVariable) = 0 %then %do;
+    %put ====================;
+    %put A value for ageVariable is required;
+    %put Please check your macro call and try again.;
+    %put Run %nrsrt(%ageStandardize(help)) for help;
+    %put ====================;
+    %goto exit;
+%end;
+%if %length(&numerator) = 0 %then %do;
+    %put ====================;
+    %put A value for numerator is required;
+    %put Please check your macro call and try again.;
+    %put Run %nrsrt(%ageStandardize(help)) for help;
+    %put ====================;
+    %goto exit;
+%end;
+%if %length(&denominator) = 0 %then %do;
+    %put ====================;
+    %put A value for denominator is required;
+    %put Please check your macro call and try again.;
+    %put Run %nrsrt(%ageStandardize(help)) for help;
+    %put ====================;
+    %goto exit;
+%end;
+%if %length(&standardPopulation) = 0 %then %do;
+    %put ====================;
+    %put A value for standardPopulation is required;
+    %put Please check your macro call and try again.;
+    %put Run %nrsrt(%ageStandardize(help)) for help;
+    %put ====================;
+    %goto exit;
+%end;
+%if %length(&standardPopulationAgeVariable) = 0 %then %do;
+    %put ====================;
+    %put A value for standardPopulationAgeVariable is required;
+    %put Please check your macro call and try again.;
+    %put Run %nrsrt(%ageStandardize(help)) for help;
+    %put ====================;
+    %goto exit;
+%end;
 
 /* Create standard population */
 data canada2011;
