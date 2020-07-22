@@ -15,7 +15,7 @@
 );
 
 /* Help message */
-%if %upcase(&printHelp) = "HELP" %then %goto help_msg;
+%if %upcase(&printHelp) = HELP %then %goto help_msg;
 
 /* Create standard population */
 data canada2011;
@@ -276,16 +276,13 @@ run;
     %put Direct Age Standardization;
     %put ;
     %put VERSION;
-    %put &semver;
+    %put 0.1.0;
     %put ;
     %put SYNTAX;
-    %put %ageStandardize(<help ?>; <data=[Dataset Name]>,
-        <ageVariable=[Column Name]>, <numerator=[Column Name], <demoninator=[Column Name]>,
-        <standardPopulation=[Dataset Name]>, <standardPopulationAgeVariable=[Column Name]>,
-        <scanAgeGroupsToMatch={YES | NO}>, <byGroupVariable=[Column Name]>, where=[Condition]);
+    %put %nrstr(%ageStandardize(<help ?>; <data=[Dataset Name]>, <ageVariable=[Column Name]>, <numerator=[Column Name], <demoninator=[Column Name]>, <standardPopulation=[Dataset Name]>, <standardPopulationAgeVariable=[Column Name]>, <scanAgeGroupsToMatch={YES | NO}>, <byGroupVariable=[Column Name]>, where=[Condition]));
     %put ;
     %put PARAMETERS;
-    %put help: Use %ageStandardize(help) to display this help message; Null otherwise.;
+    %put help: Use %nrstr(%ageStandardize(help)) to display this help message. Null otherwise.;
     %put data: Names the dataset used to perform the direct age standardization.;
     %put ageVariable: Names the column in "data" that contains the age data.;
     %put numerator: Names the column in "data" that conatins the number of people in the study population having a contidion of interest;
