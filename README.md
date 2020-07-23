@@ -14,7 +14,7 @@ This macro is built to work with SAS versions `>= 9.4`. Installing the macro is 
 Before you can work with the macros, you need to fetch the files form the repository.
 
 ```
-filename macro URL "https://cdn.jsdelivr.net/gh/lanejames35/sas-age-standardization@master/ageStandardize.sas"
+filename macro URL "https://cdn.jsdelivr.net/gh/lanejames35/sas-age-standardization@master/ageStandardize.sas";
 ```
 This will put the macro into a file reference named `macro` that you can bring into your SAS session. The use of the name `macro` in the example below is arbitrary and can be anything you want!
 
@@ -33,7 +33,7 @@ That's it! You’re now ready to call up the macros!
 Please copy the code below to give yourself an idea of the expected inputs.
 
 ```
-filename macro URL "https://cdn.jsdelivr.net/gh/lanejames35/sas-age-standardization@master/ageStandardize.sas"
+filename macro URL "https://cdn.jsdelivr.net/gh/lanejames35/sas-age-standardization@master/ageStandardize.sas";
 
 %include macro;
 
