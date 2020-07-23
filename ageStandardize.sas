@@ -1,4 +1,4 @@
-/****
+﻿/****
  * Direct Age Standardization
  * 2020-07-22
  */
@@ -10,9 +10,9 @@
     denominator=,
     standardPopulation=canada2011,
     standardPopulationAgeVariable=,
+    standardPopulationCountVariable=,
     byGroupVariable=
 );
-
 /* Help message */
 %if %upcase(&printHelp) = HELP %then %goto help_msg;
 /* Parameter validation */
@@ -58,14 +58,15 @@
 %end;
 /* Create standard population */
 %if %upcase(&standardPopulation) = CANADA2011 %then %do;
-    %let standardPopulationAgeVariable=pop2011;
+    %let standardPopulationAgeVariable=age2011;
+    %let standardPopulationCountVariable=pop2011;
     proc sql;
         create table canada2011
         (
             pop2011 int,
-            age int
+            age2011 int
         );
-        insert into canada2011(pop2011, age)
+        insert into canada2011(pop2011, age2011)
         values(376321,0)
         values(379990,1)
         values(383179,2)
@@ -178,7 +179,14 @@
     %put ====================;
     %goto exit;
 %end;
-
+%if %length(&standardPopulationCountVariable) = 0 %then %do;
+    %put ====================;
+    %put A value for standardPopulationCountVariable is required.;
+    %put Please check your macro call and try again.;
+    %put Run %nrstr(%ageStandardize(help)) for help.;
+    %put ====================;
+    %goto exit;
+%end;
 /* Scan age groups */
 /* Extract age groupings and convert them to logic statements */
 proc sql noprint;
@@ -201,7 +209,6 @@ quit;
     %let word = %qscan(&groupings, &idx, %str( ));
 %end;
 %let countAgeGroups = %eval(&idx - 1);
-
 /* Apply the groupings using the logic above */
 proc sql noprint;
     create table standard as
@@ -209,49 +216,43 @@ proc sql noprint;
         %do i=1 %to &countAgeGroups;
             %let result=%scan(&groupings,&i,%str( ));
             %let expression=%scan(&logic,&i,#);
-            when age &expression then "&result"
+            when &standardPopulationAgeVariable &expression then "&result"
         %end;
             else " "
             end as &ageVariable,
-            sum(&standardPopulationAgeVariable) as sum_&standardPopulationAgeVariable
+            sum(&standardPopulationCountVariable) as sum_&standardPopulationCountVariable
             from &standardPopulation
             group by &ageVariable
-            order by &ageVariable
         ;
 quit;
-
 /* Sort age groups to facilitate the merge */
 proc sort
     data = &data;
     by &ageVariable;
 run;
-
 /* Merge and calculate */
 proc sql noprint;
-    select sum(sum_&standardPopulationAgeVariable)
+    select sum(sum_&standardPopulationCountVariable)
     into :total_std
     from standard
     ;
 quit;
-
 data mergedStandard;
    merge &data(in=ina) standard(in=inb);
    by &ageVariable;
    if ina and inb;
 
-   w_i=sum_&standardPopulationAgeVariable/&total_std;
+   w_i=sum_&standardPopulationCountVariable/&total_std;
 
    ir_i=&numerator/&denominator;
 
    varpy_i=&numerator/(&denominator.**2);
 run;
-
 /* Sort again in the case of a by gorup */
 proc sort
     data=mergedStandard;
     by &byGroupVariable &ageVariable;
 run;
-
 data ASRcalculation;
     set mergedStandard end=eof;
    /************************************
@@ -346,7 +347,6 @@ proc datasets
         delete canada2011 mergedStandard standard;
     run;
 quit;
-
 %goto exit;
 %help_msg:
     %put =================================;
@@ -356,7 +356,7 @@ quit;
     %put 0.1.1;
     %put ;
     %put SYNTAX;
-    %put %nrstr(%ageStandardize(<help ?>; <data=[Dataset Name]>, <ageVariable=[Column Name]>, <numerator=[Column Name], <demoninator=[Column Name]>, <standardPopulation=[Dataset Name]>, <standardPopulationAgeVariable=[Column Name]>, <scanAgeGroupsToMatch={YES | NO}>, <byGroupVariable=[Column Name]>, where=[Condition]));
+    %put %nrstr(%ageStandardize(<help ?>; <data=[Dataset Name]>, <ageVariable=[Column Name]>, <numerator=[Column Name], <demoninator=[Column Name]>, <standardPopulation=[Dataset Name]>, <standardPopulationAgeVariable=[Column Name]>, <standardPopulationCountVariable=[Column Name]>, <byGroupVariable=[Column Name]>));
     %put ;
     %put PARAMETERS;
     %put help: Use %nrstr(%ageStandardize(help)) to display this help message. Null otherwise.;
@@ -366,6 +366,7 @@ quit;
     %put denominator: Names the column in "data" that conatins the total number of people in the study population.;
     %put standardPopulation: Names the dataset used to weight the indicence rate.;
     %put standardPopulationAgeVariable: Names the column in "standardPopulation" that contains the age data.;
+    %put standardPopulationCountVariable: Names the column in "standardPopulation" that contains the population count data.;
     %put byGroupVariable: Names the column used to split the data. Age standarization is calculated for each distinct level.;
     %put where: Filters the input data with the condition supplied.;
     %put ;
