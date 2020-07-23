@@ -245,6 +245,12 @@ data mergedStandard;
    varpy_i=&numerator/(&denominator.**2);
 run;
 
+/* Sort again in the case of a by gorup */
+proc sort
+    data=mergedStandard;
+    by &byGroupVariable &ageVariable;
+run;
+
 data ASRcalculation;
     set mergedStandard end=eof;
    /************************************
@@ -258,7 +264,7 @@ data ASRcalculation;
 
     %if %length(&byGroupVariable) > 0 %then %do;
         by &byGroupVariable;
-        if first.&geo_var then
+        if first.&byGroupVariable then
         do;
             IRW=0;
             VARPYW=0;
@@ -274,7 +280,7 @@ data ASRcalculation;
         CRNUM = CRNUM + &numerator;
         CRDEN = CRDEN + &denominator;
 
-        if last.&geo_var then
+        if last.&byGroupVariable then
         do;
         /********************************
             Crude incidence rate
@@ -340,7 +346,7 @@ run;
     %put Direct Age Standardization;
     %put ;
     %put VERSION;
-    %put 0.1.0;
+    %put 0.1.1;
     %put ;
     %put SYNTAX;
     %put %nrstr(%ageStandardize(<help ?>; <data=[Dataset Name]>, <ageVariable=[Column Name]>, <numerator=[Column Name], <demoninator=[Column Name]>, <standardPopulation=[Dataset Name]>, <standardPopulationAgeVariable=[Column Name]>, <scanAgeGroupsToMatch={YES | NO}>, <byGroupVariable=[Column Name]>, where=[Condition]));
