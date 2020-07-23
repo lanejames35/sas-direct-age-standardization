@@ -9,7 +9,7 @@
     numerator=,
     denominator=,
     standardPopulation=canada2011,
-    standardPopulationAgeVariable=,
+    standardPopulationAgeVariable=pop2011,
     byGroupVariable=,
     where=,
 );
@@ -182,23 +182,23 @@ quit;
 /* Scan age groups */
 /* Extract age groupings and convert them to logic statements */
 proc sql noprint;
-   select distinct &age_var
+   select distinct &ageVariable
         ,case
-         when index(&age_var,'-')>1 then cat('between ',tranwrd(&age_var,'-',' and '))
-         when index(&age_var,'<')=1 then substr(&age_var,index(&age_var,'<'))
-         when index(&age_var,'+')>0 then cat(">=",substr(&age_var,1,index(&age_var,'+')-1))
+         when index(&ageVariable,'-')>1 then cat('between ',tranwrd(&ageVariable,'-',' and '))
+         when index(&ageVariable,'<')=1 then substr(&ageVariable,index(&ageVariable,'<'))
+         when index(&ageVariable,'+')>0 then cat(">=",substr(&ageVariable,1,index(&ageVariable,'+')-1))
          end as logic
    into :groupings separated by " ", :logic separated by "#"
-   from &in;
+   from &data;
 quit;
 
 /* Count the number of age groups to apply */
 %local idx word countAgeGroups;
 %let idx = 1;
-%let word = %qscan(&groupings, &idx, "#");
+%let word = %qscan(&groupings, &idx, %srt( ));
 %do %while(&word ne);
     %let idx = %eval(&idx + 1);
-    %let word = %qscan(&groupings, &idx, "#");
+    %let word = %qscan(&groupings, &idx, %str( ));
 %end;
 %let countAgeGroups = %eval(&idx - 1);
 
@@ -212,12 +212,18 @@ proc sql noprint;
             when age &expression then "&result"
         %end;
             else " "
-            end as agecat,
-            sum(&standardAgeVariable) as sum_&standardPopulationAgeVariable
+            end as &ageVariable,
+            sum(&standardPopulationAgeVariable) as sum_&standardPopulationAgeVariable
             from &standardPopulation
-            group by agecat
+            group by &ageVariable
         ;
 quit;
+
+/* Sort age groups to facilitate the merge */
+proc sort
+    data = &data;
+    by &ageVariable;
+run;
 
 /* Merge and calculate */
 proc sql noprint;
@@ -228,19 +234,19 @@ proc sql noprint;
 quit;
 
 data mergedStandard;
-   merge step3(in=ina) standard(in=inb);
-   by agecat;
+   merge &data(in=ina) standard(in=inb);
+   by &ageVariable;
    if ina and inb;
 
    w_i=sum_&standardPopulationAgeVariable/&total_std;
 
-   ir_i=numer/denom;
+   ir_i=&numerator/&denominator;
 
-   varpy_i=numer/(denom**2);
+   varpy_i=&numerator/(&denominator.**2);
 run;
 
 data ASRcalculation;
-    set mergedStandard(end=eof);
+    set mergedStandard end=eof;
    /************************************
     * IRW=weighted incidence rate
     * VARPY=part of person-time variance
@@ -265,8 +271,8 @@ data ASRcalculation;
         IRW = IRW + (W_I * IR_I);
         SUMWI = SUMWI + W_I;
         VARPY = VARPY + ((W_I**2) * VARPY_I);
-        CRNUM = CRNUM + numer;
-        CRDEN = CRDEN + denom;
+        CRNUM = CRNUM + &numerator;
+        CRDEN = CRDEN + &denominator;
 
         if last.&geo_var then
         do;
@@ -286,17 +292,21 @@ data ASRcalculation;
         end;
     %end;
     %else %do;
-        IRW=0;
-        VARPYW=0;
-        VARPY=0;
-        SUMWI=0;
-        CRNUM=0;
-        CRDEN=0;
+        if _N_ = 1 then do;
+            IRW=0;
+            VARPYW=0;
+            VARPY=0;
+            SUMWI=0;
+            CRNUM=0;
+            CRDEN=0;
+        end;
+
         IRW = IRW + (W_I * IR_I);
         SUMWI = SUMWI + W_I;
         VARPY = VARPY + ((W_I**2) * VARPY_I);
-        CRNUM = CRNUM + numer;
-        CRDEN = CRDEN + denom;
+        CRNUM = CRNUM + &numerator;
+        CRDEN = CRDEN + &denominator;
+
         if eof then
         do;
         /********************************
