@@ -216,6 +216,7 @@ proc sql noprint;
             sum(&standardPopulationAgeVariable) as sum_&standardPopulationAgeVariable
             from &standardPopulation
             group by &ageVariable
+            order by &ageVariable
         ;
 quit;
 
