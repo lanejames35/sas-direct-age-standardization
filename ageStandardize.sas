@@ -8,7 +8,7 @@
     ageVariable=,
     numerator=,
     denominator=,
-    standardPopulation=,
+    standardPopulation=canada2011,
     standardPopulationAgeVariable=,
     byGroupVariable=,
     where=,
@@ -19,161 +19,166 @@
 /* Parameter validation */
 %if %length(&data) = 0 %then %do;
     %put ====================;
-    %put An value for data is required;
+    %put An value for data is required.;
     %put Please check your macro call and try again.;
-    %put Run %nrsrt(%ageStandardize(help)) for help;
+    %put Run %nrstr(%ageStandardize(help)) for help.;
     %put ====================;
     %goto exit;
 %end;
 %if %length(&ageVariable) = 0 %then %do;
     %put ====================;
-    %put A value for ageVariable is required;
+    %put A value for ageVariable is required.;
     %put Please check your macro call and try again.;
-    %put Run %nrsrt(%ageStandardize(help)) for help;
+    %put Run %nrstr(%ageStandardize(help)) for help.;
     %put ====================;
     %goto exit;
 %end;
 %if %length(&numerator) = 0 %then %do;
     %put ====================;
-    %put A value for numerator is required;
+    %put A value for numerator is required.;
     %put Please check your macro call and try again.;
-    %put Run %nrsrt(%ageStandardize(help)) for help;
+    %put Run %nrstr(%ageStandardize(help)) for help.;
     %put ====================;
     %goto exit;
 %end;
 %if %length(&denominator) = 0 %then %do;
     %put ====================;
-    %put A value for denominator is required;
+    %put A value for denominator is required.;
     %put Please check your macro call and try again.;
-    %put Run %nrsrt(%ageStandardize(help)) for help;
+    %put Run %nrstr(%ageStandardize(help)) for help.;
     %put ====================;
     %goto exit;
 %end;
 %if %length(&standardPopulation) = 0 %then %do;
     %put ====================;
-    %put A value for standardPopulation is required;
+    %put A value for standardPopulation is required.;
     %put Please check your macro call and try again.;
-    %put Run %nrsrt(%ageStandardize(help)) for help;
+    %put Run %nrstr(%ageStandardize(help)) for help.;
     %put ====================;
     %goto exit;
 %end;
 %if %length(&standardPopulationAgeVariable) = 0 %then %do;
     %put ====================;
-    %put A value for standardPopulationAgeVariable is required;
+    %put A value for standardPopulationAgeVariable is required.;
     %put Please check your macro call and try again.;
-    %put Run %nrsrt(%ageStandardize(help)) for help;
+    %put Run %nrstr(%ageStandardize(help)) for help.;
     %put ====================;
     %goto exit;
 %end;
 
 /* Create standard population */
-data canada2011;
-input pop2011 age;
-cards;
-376321 0
-379990 1
-383179 2
-383741 3
-375833 4
-366757 5
-361038 6
-363440 7
-358621 8
-360577 9
-365198 10
-376458 11
-379838 12
-391245 13
-405425 14
-426802 15
-440145 16
-446524 17
-455872 18
-469609 19
-479650 20
-484077 21
-470052 22
-458775 23
-461800 24
-471522 25
-475052 26
-474287 27
-475287 28
-473693 29
-479377 30
-472955 31
-462922 32
-455951 33
-456750 34
-457914 35
-458413 36
-448563 37
-450150 38
-458047 39
-480129 40
-478010 41
-475541 42
-473014 43
-479224 44
-506180 45
-541424 46
-557834 47
-562501 48
-551970 49
-558958 50
-548847 51
-536639 52
-529913 53
-516903 54
-501158 55
-493948 56
-473623 57
-451080 58
-433281 59
-424456 60
-414501 61
-405624 62
-404282 63
-401580 64
-344130 65
-317981 66
-306903 67
-292908 68
-271018 69
-257990 70
-240638 71
-230156 72
-218638 73
-206400 74
-200626 75
-190737 76
-180672 77
-176879 78
-170424 79
-163436 80
-152274 81
-138753 82
-129386 83
-117291 84
-107226 85
-96193 86
-85051 87
-73870 88
-64399 89
-54015 90
-43307 91
-31444 92
-24184 93
-18966 94
-13842 95
-9962 96
-7109 97
-4974 98
-3260 99
-5268 100
-;
-run;
-
+%if %upcase(&standardPopulation) = CANADA2011 %then %do;
+proc sql;
+    create table canada2011
+    (
+        pop2011 int,
+        age int
+    );
+    insert into canada2011(pop2011, age)
+    values(376321,0)
+    values(379990,1)
+    values(383179,2)
+    values(383741,3)
+    values(375833,4)
+    values(366757,5)
+    values(361038,6)
+    values(363440,7)
+    values(358621,8)
+    values(360577,9)
+    values(365198,10)
+    values(376458,11)
+    values(379838,12)
+    values(391245,13)
+    values(405425,14)
+    values(426802,15)
+    values(440145,16)
+    values(446524,17)
+    values(455872,18)
+    values(469609,19)
+    values(479650,20)
+    values(484077,21)
+    values(470052,22)
+    values(458775,23)
+    values(461800,24)
+    values(471522,25)
+    values(475052,26)
+    values(474287,27)
+    values(475287,28)
+    values(473693,29)
+    values(479377,30)
+    values(472955,31)
+    values(462922,32)
+    values(455951,33)
+    values(456750,34)
+    values(457914,35)
+    values(458413,36)
+    values(448563,37)
+    values(450150,38)
+    values(458047,39)
+    values(480129,40)
+    values(478010,41)
+    values(475541,42)
+    values(473014,43)
+    values(479224,44)
+    values(506180,45)
+    values(541424,46)
+    values(557834,47)
+    values(562501,48)
+    values(551970,49)
+    values(558958,50)
+    values(548847,51)
+    values(536639,52)
+    values(529913,53)
+    values(516903,54)
+    values(501158,55)
+    values(493948,56)
+    values(473623,57)
+    values(451080,58)
+    values(433281,59)
+    values(424456,60)
+    values(414501,61)
+    values(405624,62)
+    values(404282,63)
+    values(401580,64)
+    values(344130,65)
+    values(317981,66)
+    values(306903,67)
+    values(292908,68)
+    values(271018,69)
+    values(257990,70)
+    values(240638,71)
+    values(230156,72)
+    values(218638,73)
+    values(206400,74)
+    values(200626,75)
+    values(190737,76)
+    values(180672,77)
+    values(176879,78)
+    values(170424,79)
+    values(163436,80)
+    values(152274,81)
+    values(138753,82)
+    values(129386,83)
+    values(117291,84)
+    values(107226,85)
+    values(96193,86)
+    values(85051,87)
+    values(73870,88)
+    values(64399,89)
+    values(54015,90)
+    values(43307,91)
+    values(31444,92)
+    values(24184,93)
+    values(18966,94)
+    values(13842,95)
+    values(9962,96)
+    values(7109,97)
+    values(4974,98)
+    values(3260,99)
+    values(5268,100)
+    ;
+quit;
+%end;
 /* Scan age groups */
 /* Extract age groupings and convert them to logic statements */
 proc sql noprint;
