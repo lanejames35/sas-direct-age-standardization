@@ -3,7 +3,7 @@
 A SAS macro that performs direct age standardization of event rates (i.e. incidence, mortality, etc.)
 
 ## How does it work?
-The macro attempts to emulate the method described by the Association of Public Health Epidemiologists in Ontario (APHEO). See this PDF (document)["http://core.apheo.ca/resources/indicators/Standardization%20report_NamBains_FINALMarch16.pdf"].
+The macro attempts to emulate the method described by the Association of Public Health Epidemiologists in Ontario (APHEO). See this PDF [document](http://core.apheo.ca/resources/indicators/Standardization%20report_NamBains_FINALMarch16.pdf).
 
 ## Setup
 This macro is built to work with SAS versions `>= 9.4`. Installing the macro is a two-step process:
