@@ -195,7 +195,7 @@ quit;
 /* Count the number of age groups to apply */
 %local idx word countAgeGroups;
 %let idx = 1;
-%let word = %qscan(&groupings, &idx, %srt( ));
+%let word = %qscan(&groupings, &idx, %str( ));
 %do %while(&word ne);
     %let idx = %eval(&idx + 1);
     %let word = %qscan(&groupings, &idx, %str( ));
