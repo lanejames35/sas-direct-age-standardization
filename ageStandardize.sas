@@ -10,8 +10,7 @@
     denominator=,
     standardPopulation=canada2011,
     standardPopulationAgeVariable=pop2011,
-    byGroupVariable=,
-    where=,
+    byGroupVariable=
 );
 
 /* Help message */
