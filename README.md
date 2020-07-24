@@ -38,8 +38,8 @@ filename macro URL "https://cdn.jsdelivr.net/gh/lanejames35/sas-direct-age-stand
 %include macro;
 
 data study_data;
-format age $char5. events 8. pop 8.;
-input age$ events pop;
+format ageGroup $char5. events 8. pop 8.;
+input ageGroup$ events pop;
 cards;
 <1     37 1234
 1-4    25 1678
@@ -66,7 +66,7 @@ run;
 
 %ageStandardize(
     data=studyData,
-    ageVariable=age,
+    ageVariable=ageGroup,
     numerator=events,
     denominator=pop
 )
@@ -76,20 +76,20 @@ In our example above, the expected record layout of the input data looks like th
 
 ```
 -----------------------
-| age | events | pop  | 
+| ageGroup | events | pop  | 
 -----------------------
-| <1  | 37     | 1234 |
-| 1-4 | 25     | 1678 |
-| 5-9 | 23     | 1768 |
+| <1       | 37     | 1234 |
+| 1-4      | 25     | 1678 |
+| 5-9      | 23     | 1768 |
 .
 .
 .
-| 90+ | 99     | 899 |
+| 90+      | 99     | 899 |
 ----------------------
 ```
 
 This dataset has the following required columns:
-1. `age` group as a string
+1. `ageGroup` group as a string
 2. `events` as the number of individuals with our condition of interest
 3. `pop` as the total number of individuals in our study population
 
@@ -97,10 +97,10 @@ Let's call this dataset `studyData`. A call to the marco with this data would lo
 ```
 %ageStandardize(
     data=studyData,
-    ageVariable=age,
+    ageVariable=ageGroup,
     numerator=events,
     denominator=pop
 )
 ```
 
-**Note** that we didn't specifiy a standard population. This macro uses the 2011 Canadian Population as the default. To use something else, create a dataset of population totals using a numeric single-year age. Then add the `standardPopulation` parameter in the macro call to refenence the new dataset. Finally, specifiy the column containing the population totals using the `standardPopulationAgeVariable` parameter.
+**Note** that we didn't specifiy a standard population. This macro uses the 2011 Canadian Population as the default. To use something else, create a dataset of population totals using a numeric single-year age. Then add the `standardPopulation` parameter in the macro call to refenence the new dataset. Specifiy the column containing the population totals using the `standardPopulationCountVariable` parameter and the column containing the single-year age groups using `standardPopulationAgeVariable` parameter.
