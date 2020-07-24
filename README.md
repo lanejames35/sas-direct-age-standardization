@@ -37,7 +37,7 @@ filename macro URL "https://cdn.jsdelivr.net/gh/lanejames35/sas-direct-age-stand
 
 %include macro;
 
-data study_data;
+data studyData;
 format ageGroup $char5. events 8. pop 8.;
 input ageGroup$ events pop;
 cards;
